@@ -1,0 +1,42 @@
+typ : type.
+term : type.
+
+nat : typ.
+=>  : typ -> typ -> typ. %infix right 999 =>.
+
+z   : term.
+s   : term -> term.
+rec : term -> term -> (term -> term -> term) -> term.
+lam : typ -> (term -> term) -> term.
+ap  : term -> term -> term.
+
+one = s z.
+two = s one.
+three = s two.
+
+has-typ : term -> typ -> type.
+has-typ-z : has-typ z nat.
+has-typ-s : has-typ E nat -> has-typ (s E) nat.
+has-typ-lam : ({x : term} has-typ x T2 -> has-typ (E x) T2)
+           -> has-typ (lam T2 ([x] E x)) (T1 => T2).
+has-typ-rec : has-typ E nat
+            -> has-typ E0 T
+            -> ({x:term} has-typ x nat -> {y:term} has-typ y T
+                -> has-typ ((E1 x) y) T)
+            -> has-typ (rec E E0 ([x] [y] E1 x y)) T.
+has-typ-app : has-typ E1 (T2 => T) -> has-typ E2 T
+           -> has-typ (ap E1 E2) T.
+
+val : term -> type. %postfix 995 val.
+val-z : z val.
+val-s : X val -> (s X) val.
+val-lam : (lam T ([x] E x)) val.
+
+step : term -> term -> type.
+step-s : step E E' -> step (s E) (s E').
+step-app-1 : step E1 E1'
+          -> step (ap E1 E2) (ap E1' E2).
+step-app-2 : E1 val -> step E2 E2'
+          -> step (ap E1 E2) (ap E1 E2').
+step-app-beta : E2 val
+             -> step (ap (lam T2 ([x] E x)) E2) (E E2).
