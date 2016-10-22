@@ -5,7 +5,7 @@ nat : typ.
 =>  : typ -> typ -> typ. %infix right 999 =>.
 
 z   : term.
-s   : term -> term.
+s   : term -> term. %prefix 995 s.
 rec : term -> term -> (term -> term -> term) -> term.
 lam : typ -> (term -> term) -> term.
 ap  : term -> term -> term.
@@ -14,11 +14,13 @@ one = s z.
 two = s one.
 three = s two.
 
+add-one = lam nat [x] (s x).
+
 has-typ : term -> typ -> type.
 has-typ-z : has-typ z nat.
 has-typ-s : has-typ E nat -> has-typ (s E) nat.
-has-typ-lam : ({x : term} has-typ x T2 -> has-typ (E x) T2)
-           -> has-typ (lam T2 ([x] E x)) (T1 => T2).
+has-typ-lam : ({x : term} has-typ x T1 -> has-typ (E x) T2)
+           -> has-typ (lam T1 ([x] E x)) (T1 => T2).
 has-typ-rec : has-typ E nat
             -> has-typ E0 T
             -> ({x:term} has-typ x nat -> {y:term} has-typ y T
